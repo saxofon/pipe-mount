@@ -1,0 +1,10 @@
+Title      : Pipe mount/fastener
+Author     : Per Hallsmark <per@hallsmark.se>
+License    : GPL
+
+Depends on : git@github.com:JohK/nutsnbolts.git, used version 744c6b1193
+
+
+Generic pipe mount/fastener that can be used as base for
+tailoring an exact mount. Initial usecase was as base for
+solarpanel to be mounted on a targa on a sailing yacht.
