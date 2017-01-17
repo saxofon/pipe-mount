@@ -11,6 +11,7 @@ pipe_diameter = 40;
 base_length = 100;
 base_width = 50;
 base_height = 80;
+rounded_corner = 10;
 
 df_M8 = _get_screw_fam("M8x70");
 M8_head_height = df_M8[_NB_F_HEAD_HEIGHT];
@@ -34,10 +35,13 @@ module pipe(diameter, length) {
 
 module tool_round_corner_3D(radius, length) {
     difference() {
-        cube([radius*2+2*strange_align, radius*2+2*strange_align, length]);
-        translate([radius+strange_align,radius+strange_align,-strange_align]) cylinder(r=radius, h=length+2*strange_align);
-        translate([radius,-strange_align,-strange_align]) cube([radius*2+4*strange_align, radius*2+2*strange_align, length+2*strange_align]);
-        translate([-strange_align,radius,-strange_align]) cube([radius*2+4*strange_align, radius*2+2*strange_align, length+2*strange_align]);
+        cube([radius*2+2*strange_align, radius*2+2*strange_align, length], center=true);
+        cylinder(r=radius, h=length+2*strange_align, center=true);
+        translate([radius+2*strange_align,2*strange_align,0])
+            cube([radius*2+4*strange_align, radius*2+4*strange_align, length+4*strange_align], center=true);
+        translate([2*strange_align,radius+2*strange_align,0])
+            cube([radius*2+4*strange_align, radius*2+4*strange_align, length+4*strange_align], center=true);
+   
     }
 }
 
@@ -45,8 +49,10 @@ module tool_round_corner_2D(radius) {
     difference() {
         square(radius*2+2*strange_align, center=true);
         circle(r=radius, center=true);
-        translate([radius+2*strange_align,0]) square(radius*2+4*strange_align, center=true);
-        translate([0,radius+2*strange_align]) square(radius*2+4*strange_align, center=true);
+        translate([radius+2*strange_align,0])
+            square(radius*2+4*strange_align, center=true);
+        translate([0,radius+2*strange_align])
+            square(radius*2+4*strange_align, center=true);
     }
 }
 
@@ -152,6 +158,7 @@ module attachement(length, width, height) {
     translate([0,-width/2+5,height/2+5])
         cube([length, 10, 10], center=true);
 }
+
 module base(diameter, length, width, height) {
     difference() {
         union() {
@@ -170,51 +177,48 @@ module base_upper(diameter, length, width, height) {
         base(diameter, base_length, base_width, base_height);
         translate([-base_length/2-strange_align,-base_width/2-strange_align,-height])
             cube([base_length+2, base_width+2, base_height]);
-        translate ([-length/2-strange_align, -width/2-strange_align, -strange_align])
-            rotate([0,0,0]) tool_round_corner_3D(10, 100);
-        translate ([-length/2-strange_align, width/2+strange_align, -strange_align])
-            rotate([0,0,-90]) tool_round_corner_3D(10, 100);
-        translate ([length/2+strange_align, width/2+strange_align, -strange_align])
-            rotate([0,0,180]) tool_round_corner_3D(10, 100);
-        translate ([length/2+strange_align, -width/2-strange_align, -strange_align])
-            rotate([0,0,90]) tool_round_corner_3D(10, 100);
-   }
-   /*
-        translate ([-length/2, -width/2-strange_align, height/2+10+strange_align])
-            rotate([0,90,0]) rotate([0,0,0]) tool_round_corner_3D(10, 100);
-        translate ([-length/2, width/2+strange_align, height/2+10+strange_align])
-            rotate([0,90,0])  rotate([0,0,-90]) tool_round_corner_3D(10, 100);*/
+        translate ([-length/2+rounded_corner, -width/2+rounded_corner, 0])
+            rotate([0,0,0]) tool_round_corner_3D(rounded_corner, 100);
+        translate ([-length/2+rounded_corner, width/2-rounded_corner, 0])
+            rotate([0,0,-90]) tool_round_corner_3D(rounded_corner, 100);
+        translate ([length/2-rounded_corner, width/2-rounded_corner, 0])
+            rotate([0,0,180]) tool_round_corner_3D(rounded_corner, 100);
+        translate ([length/2-rounded_corner, -width/2+rounded_corner, 0])
+            rotate([0,0,90]) tool_round_corner_3D(rounded_corner, 100);
+        translate ([0, -width/2+rounded_corner, height/2-rounded_corner+10])
+            rotate([0,90,0]) rotate([0,0,0]) tool_round_corner_3D(rounded_corner, 100);
+        translate ([0, width/2-rounded_corner, height/2-rounded_corner+10])
+            rotate([0,90,0]) rotate([0,0,-90]) tool_round_corner_3D(rounded_corner, 100);
+    }
 }
 
 
 
 module base_lower(diameter, length, width, height) {
-
     difference() {
         base(diameter, base_length, base_width, base_height);
         translate([-base_length/2-strange_align, -base_width/2-strange_align, 0])
             cube([base_length+2, base_width+2, base_height]);
         rotate([90,0,0])
-          rotate_extrude(angle = 90)
-            translate ([-length/2+10, -width/2+10, 0])
-              tool_round_corner_2D(10);
+          rotate_extrude(angle=90, $fn=200)
+            translate ([-length/2+rounded_corner, -width/2+rounded_corner, 0])
+              tool_round_corner_2D(rounded_corner);
         rotate([-90,0,0])
-          rotate_extrude(angle = 90)
-            translate ([-length/2+10, -width/2+10, 0])
-              tool_round_corner_2D(10);
-
-        translate ([-length/2-strange_align, -width/2-strange_align, -height/2-strange_align])
-            rotate([0,90,0]) rotate([0,0,90]) tool_round_corner_3D(10, 100);
-        translate ([-length/2-strange_align, width/2+strange_align, -height/2-strange_align])
-            rotate([0,90,0]) rotate([0,0,180]) tool_round_corner_3D(10, 100);
+          rotate_extrude(angle=90, $fn=200)
+            translate ([-length/2+rounded_corner, -width/2+rounded_corner, 0])
+              tool_round_corner_2D(rounded_corner);
+        translate ([0, -width/2+rounded_corner, -height/2+rounded_corner])
+            rotate([0,90,0]) rotate([0,0,90]) tool_round_corner_3D(rounded_corner, 100);
+        translate ([0, width/2-rounded_corner, -height/2+rounded_corner])
+            rotate([0,90,0]) rotate([0,0,180]) tool_round_corner_3D(rounded_corner, 100);
     }
 }
 
 // lower part of base
-base_lower(pipe_diameter, base_length, base_width, base_height);
+//base_lower(pipe_diameter, base_length, base_width, base_height);
 
 // upper part of base
-//base_upper(pipe_diameter, base_length, base_width, base_height);
+base_upper(pipe_diameter, base_length, base_width, base_height);
 
 /*
 // set of bolts and nuts
