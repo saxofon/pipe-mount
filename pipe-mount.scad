@@ -12,14 +12,12 @@ base_length = 100;
 base_width = 50;
 base_height = 80;
 
-ds_M8_70 = _get_screw("M8x70");
-df_M8_70 = _get_screw_fam("M8x70");
-M8_70_head_height = df_M8_70[_NB_F_HEAD_HEIGHT];
-M8_70_nut_height = df_M8_70[_NB_F_NUT_HEIGHT];
+df_M8 = _get_screw_fam("M8x70");
+M8_head_height = df_M8[_NB_F_HEAD_HEIGHT];
+M8_nut_height = df_M8[_NB_F_NUT_HEIGHT];
 
-ds_M6_45 = _get_screw("M6x45");
-df_M6_45 = _get_screw_fam("M6x45");
-M6_45_head_height = df_M6_45[_NB_F_HEAD_HEIGHT];
+df_M6 = _get_screw_fam("M6x45");
+M6_head_height = df_M6[_NB_F_HEAD_HEIGHT];
 
 $fn = 100;
 
@@ -34,12 +32,21 @@ module pipe(diameter, length) {
         cylinder(r=diameter/2, h=length, center=true);
 }
 
-module tool_round_corner(radius, length) {
+module tool_round_corner_3D(radius, length) {
     difference() {
         cube([radius*2+2*strange_align, radius*2+2*strange_align, length]);
         translate([radius+strange_align,radius+strange_align,-strange_align]) cylinder(r=radius, h=length+2*strange_align);
         translate([radius,-strange_align,-strange_align]) cube([radius*2+4*strange_align, radius*2+2*strange_align, length+2*strange_align]);
         translate([-strange_align,radius,-strange_align]) cube([radius*2+4*strange_align, radius*2+2*strange_align, length+2*strange_align]);
+    }
+}
+
+module tool_round_corner_2D(radius) {
+    difference() {
+        square(radius*2+2*strange_align, center=true);
+        circle(r=radius, center=true);
+        translate([radius+2*strange_align,0]) square(radius*2+4*strange_align, center=true);
+        translate([0,radius+2*strange_align]) square(radius*2+4*strange_align, center=true);
     }
 }
 
@@ -60,15 +67,15 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([diameter/2+10, width/4, height/2+strange_align]) {
             if (cutouts) {
-                hole_through("M8", l=70, h=M8_70_head_height+3, cld=0.2, hcld=0.2);
+                hole_through("M8", l=70, h=M8_head_height+3, cld=0.2, hcld=0.2);
             } else {
                 screw("M8x70");
             }
         }
     rotate([180,0,0])
-        translate ([diameter/2+10, width/4, -height/2+M8_70_nut_height]) {
+        translate ([diameter/2+10, width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_70_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
             } else {
                 nut("M8");
             }
@@ -76,15 +83,15 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([diameter/2+10, -width/4, height/2+strange_align]) {
             if (cutouts) {
-                hole_through("M8", l=70, h=M8_70_head_height+3, cld=0.2, hcld=0.2);
+                hole_through("M8", l=70, h=M8_head_height+3, cld=0.2, hcld=0.2);
             } else {
                 screw("M8x70");
             }
         }
     rotate([180,0,0])
-        translate ([diameter/2+10, -width/4, -height/2+M8_70_nut_height]) {
+        translate ([diameter/2+10, -width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_70_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
             } else {
                 nut("M8");
             }
@@ -92,7 +99,7 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([diameter/2+(length/2-diameter/2)/2, 0, 0+strange_align]) {
             if (cutouts) {
-                hole_through("M6", l=45, h=M6_45_head_height+1+strange_align, cld=0.2, hcld=0.2);
+                hole_through("M6", l=45, h=M6_head_height+1+strange_align, cld=0.2, hcld=0.2);
             } else {
                 screw("M6x45");
             }
@@ -100,15 +107,15 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([-diameter/2-10, width/4, height/2+strange_align]) {
             if (cutouts) {
-                hole_through("M8", l=70, h=M8_70_head_height+3, cld=0.2, hcld=0.2);
+                hole_through("M8", l=70, h=M8_head_height+3, cld=0.2, hcld=0.2);
             } else {
                 screw("M8x70");
             }
         }
     rotate([180,0,0])
-        translate ([-diameter/2-10, width/4, -height/2+M8_70_nut_height]) {
+        translate ([-diameter/2-10, width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_70_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
             } else {
                 nut("M8");
             }
@@ -116,15 +123,15 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([-diameter/2-10, -width/4, height/2+strange_align]) {
             if (cutouts) {
-                hole_through("M8", l=70, h=M8_70_head_height+3, cld=0.2, hcld=0.2);
+                hole_through("M8", l=70, h=M8_head_height+3, cld=0.2, hcld=0.2);
             } else {
                 screw("M8x70");
             }
         }
     rotate([180,0,0])
-        translate ([-diameter/2-10, -width/4, -height/2+M8_70_nut_height]) {
+        translate ([-diameter/2-10, -width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_70_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
             } else {
                 nut("M8");
             }
@@ -132,7 +139,7 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([-diameter/2-(length/2-diameter/2)/2, 0, 0+strange_align]) {
             if (cutouts) {
-                hole_through("M6", l=45, h=M6_45_head_height+1+strange_align, cld=0.2, hcld=0.2);
+                hole_through("M6", l=45, h=M6_head_height+1+strange_align, cld=0.2, hcld=0.2);
             } else {
                 screw("M6x45");
             }
@@ -164,41 +171,43 @@ module base_upper(diameter, length, width, height) {
         translate([-base_length/2-strange_align,-base_width/2-strange_align,-height])
             cube([base_length+2, base_width+2, base_height]);
         translate ([-length/2-strange_align, -width/2-strange_align, -strange_align])
-            rotate([0,0,0]) tool_round_corner(10, 100);
+            rotate([0,0,0]) tool_round_corner_3D(10, 100);
         translate ([-length/2-strange_align, width/2+strange_align, -strange_align])
-            rotate([0,0,-90]) tool_round_corner(10, 100);
+            rotate([0,0,-90]) tool_round_corner_3D(10, 100);
         translate ([length/2+strange_align, width/2+strange_align, -strange_align])
-            rotate([0,0,180]) tool_round_corner(10, 100);
+            rotate([0,0,180]) tool_round_corner_3D(10, 100);
         translate ([length/2+strange_align, -width/2-strange_align, -strange_align])
-            rotate([0,0,90]) tool_round_corner(10, 100);
+            rotate([0,0,90]) tool_round_corner_3D(10, 100);
    }
    /*
         translate ([-length/2, -width/2-strange_align, height/2+10+strange_align])
-            rotate([0,90,0]) rotate([0,0,0]) tool_round_corner(10, 100);
+            rotate([0,90,0]) rotate([0,0,0]) tool_round_corner_3D(10, 100);
         translate ([-length/2, width/2+strange_align, height/2+10+strange_align])
-            rotate([0,90,0])  rotate([0,0,-90]) tool_round_corner(10, 100);*/
+            rotate([0,90,0])  rotate([0,0,-90]) tool_round_corner_3D(10, 100);*/
 }
 
+
+
 module base_lower(diameter, length, width, height) {
+
     difference() {
         base(diameter, base_length, base_width, base_height);
-        translate([-base_length/2-strange_align,-base_width/2-strange_align,0])
+        translate([-base_length/2-strange_align, -base_width/2-strange_align, 0])
             cube([base_length+2, base_width+2, base_height]);
-        translate ([-length/2-strange_align, -width/2-strange_align, -height-strange_align])
-            rotate([0,0,0]) tool_round_corner(10, 100);
-        translate ([-length/2-strange_align, width/2+strange_align, -height-strange_align])
-            rotate([0,0,-90]) tool_round_corner(10, 100);
-        translate ([length/2+strange_align, width/2+strange_align, -height-strange_align])
-            rotate([0,0,180]) tool_round_corner(10, 100);
-        translate ([length/2+strange_align, -width/2-strange_align, -height-strange_align])
-            rotate([0,0,90]) tool_round_corner(10, 100);
+        rotate([90,0,0])
+          rotate_extrude(angle = 90)
+            translate ([-length/2+10, -width/2+10, 0])
+              tool_round_corner_2D(10);
+        rotate([-90,0,0])
+          rotate_extrude(angle = 90)
+            translate ([-length/2+10, -width/2+10, 0])
+              tool_round_corner_2D(10);
+
         translate ([-length/2-strange_align, -width/2-strange_align, -height/2-strange_align])
-            rotate([0,90,0]) rotate([0,0,90]) tool_round_corner(10, 100);
+            rotate([0,90,0]) rotate([0,0,90]) tool_round_corner_3D(10, 100);
         translate ([-length/2-strange_align, width/2+strange_align, -height/2-strange_align])
-            rotate([0,90,0]) rotate([0,0,180]) tool_round_corner(10, 100);
+            rotate([0,90,0]) rotate([0,0,180]) tool_round_corner_3D(10, 100);
     }
-
-
 }
 
 // lower part of base
