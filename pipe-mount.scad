@@ -81,7 +81,7 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([diameter/2+10, width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=2*M8_nut_height+1, clk=0.2);
             } else {
                 nut("M8");
             }
@@ -97,7 +97,7 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([diameter/2+10, -width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=2*M8_nut_height+1, clk=0.2);
             } else {
                 nut("M8");
             }
@@ -121,7 +121,7 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([-diameter/2-10, width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=2*M8_nut_height+1, clk=0.2);
             } else {
                 nut("M8");
             }
@@ -137,7 +137,7 @@ module bolts_n_nuts(diameter, length, width, height, cutouts) {
     rotate([180,0,0])
         translate ([-diameter/2-10, -width/4, -height/2+M8_nut_height]) {
             if (cutouts) {
-                nutcatch_parallel("M8", l=M8_nut_height+20, clk=0.2);
+                nutcatch_parallel("M8", l=2*M8_nut_height+1, clk=0.2);
             } else {
                 nut("M8");
             }
